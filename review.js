@@ -1,7 +1,11 @@
+// Set the deployed backend URL
+const BACKEND_URL = "https://balamoviereview-backend.onrender.com";
+
 // 🔹 Get Movie ID from URL
 const urlParams = new URLSearchParams(window.location.search);
 const movieId = urlParams.get("movieId");
 
+// Event listener for review form submission
 document.getElementById("reviewForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -15,7 +19,7 @@ document.getElementById("reviewForm").addEventListener("submit", async function 
     }
 
     try {
-        const response = await fetch("http://localhost:5000/reviews", {
+        const response = await fetch(`${BACKEND_URL}/reviews`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ movieId, user, rating, comment })
@@ -23,8 +27,8 @@ document.getElementById("reviewForm").addEventListener("submit", async function 
 
         if (response.ok) {
             alert("Review added successfully!");
-            document.getElementById("reviewForm").reset(); // ✅ Clear form after submission
-            fetchReviews(); // ✅ Refresh the reviews
+            document.getElementById("reviewForm").reset(); // Clear form after submission
+            fetchReviews(); // Refresh the reviews section
         } else {
             alert("Failed to add review");
         }
@@ -36,14 +40,14 @@ document.getElementById("reviewForm").addEventListener("submit", async function 
 // 🔹 Fetch and Display Reviews
 async function fetchReviews() {
     try {
-        const response = await fetch(`http://localhost:5000/reviews/${movieId}`);
+        const response = await fetch(`${BACKEND_URL}/reviews/${movieId}`);
         const reviews = await response.json();
 
         let reviewSection = document.getElementById("reviews");
-        reviewSection.innerHTML = ""; // ✅ Clear previous reviews
+        reviewSection.innerHTML = ""; // Clear previous reviews
 
         if (reviews.length === 0) {
-            reviewSection.innerHTML = `<p class="no-reviews">No reviews yet. Be the first to review!</p>`; 
+            reviewSection.innerHTML = `<p class="no-reviews">No reviews yet. Be the first to review!</p>`;
             return;
         }
 
@@ -56,7 +60,6 @@ async function fetchReviews() {
                 <span>(${review.rating}/5)</span>
                 <p>${review.comment}</p>
             `;
-
             reviewSection.appendChild(reviewElement);
         });
     } catch (error) {
