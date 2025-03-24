@@ -7,61 +7,61 @@ const form = document.getElementById('form');
 const search = document.getElementById('searchbar');
 const main = document.getElementById('main');
 
-// 🔹 Fetch movies from TMDB API
+// Fetch movies from TMDB API
 const apifetch = async (url) => {
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-        return data.results || []; 
-    } catch (err) {
-        console.error("Error fetching data:", err);
-        return [];
-    }
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.results || [];
+  } catch (err) {
+    console.error("Error fetching data:", err);
+    return [];
+  }
 };
 
-// 🔹 Display movies dynamically with Review Button
+// Display movies dynamically with a Review Button
 const displayMovies = (movies) => {
-    main.innerHTML = "";
-    movies.forEach((movie) => {
-        const movieCard = document.createElement("div");
-        movieCard.classList.add("movieCard");
+  main.innerHTML = "";
+  movies.forEach((movie) => {
+    const movieCard = document.createElement("div");
+    movieCard.classList.add("movieCard");
 
-        const image = document.createElement("img");
-        image.src = movie.poster_path ? IMG_PATH + movie.poster_path : "placeholder.jpg";
-        image.alt = movie.title;
+    const image = document.createElement("img");
+    image.src = movie.poster_path ? IMG_PATH + movie.poster_path : "placeholder.jpg";
+    image.alt = movie.title;
 
-        const movieTitle = document.createElement("h2");
-        movieTitle.innerHTML = movie.title;
+    const movieTitle = document.createElement("h2");
+    movieTitle.innerHTML = movie.title;
 
-        // 🔹 Review Button - Opens review.html with movie ID
-        const reviewBtn = document.createElement("button");
-        reviewBtn.innerText = "Review";
-        reviewBtn.addEventListener("click", () => openReviewPage(movie.id));
+    // Review Button - Opens review.html with movie ID as a query parameter
+    const reviewBtn = document.createElement("button");
+    reviewBtn.innerText = "Review";
+    reviewBtn.addEventListener("click", () => openReviewPage(movie.id));
 
-        movieCard.appendChild(image);
-        movieCard.appendChild(movieTitle);
-        movieCard.appendChild(reviewBtn);
-        main.appendChild(movieCard);
-    });
+    movieCard.appendChild(image);
+    movieCard.appendChild(movieTitle);
+    movieCard.appendChild(reviewBtn);
+    main.appendChild(movieCard);
+  });
 };
 
-// 🔹 Function to Open Review Page with Movie ID
+// Function to open review.html with the movie ID in the URL
 function openReviewPage(movieId) {
-    window.location.href = `review.html?movieId=${movieId}`;
+  window.location.href = `review.html?movieId=${movieId}`;
 }
 
-// 🔹 Search Functionality
+// Search functionality to fetch and display movies based on search term
 const handleSearch = (e) => {
-    e.preventDefault();
-    const searchTerm = search.value.trim();
-    if (!searchTerm) return;
-    
-    apifetch(SEARCH_API + searchTerm).then(displayMovies);
-    search.value = '';
+  e.preventDefault();
+  const searchTerm = search.value.trim();
+  if (!searchTerm) return;
+
+  apifetch(SEARCH_API + searchTerm).then(displayMovies);
+  search.value = '';
 };
 
-// 🔹 Event Listener for Search Form
+// Add event listener for the search form
 form.addEventListener('submit', handleSearch);
 
-// 🔹 Initial Fetch & Display Movies
+// Initial fetch and display of popular movies
 apifetch(API_URL).then(displayMovies);
